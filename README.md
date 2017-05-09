@@ -8,6 +8,8 @@ Before the invention of GPS, how would a person have moved from point A to point
 
     Evan is at work at Galvanize in Denver, CO, and needs to drive to Blue Rocket in San Francisco, CA to deliver a training on Internet Networking.
 
+![Mapquest](getting_to_blue_rocket.png)
+
 How would Evan do this, before he had an iPhone that told him what to do?
 
 1. Evan doesn't know the address of Galvanize by heart. Fortunately, he has a phone book from San Francisco - he flips through the phone book and finds out that Galvanize is located at 233 Sansome St Suite 1100, San Francisco, CA
@@ -136,7 +138,7 @@ Looking at my output from `ifconfig` again:
 
 ... I can see that my network has a subnet mask of `fffff000`, which means it could host a total of 4,096 devices.
 
-### Gateway
+### Gateways
 
 Gateways play a special role within networks, and outside of them (remember our parking lot attendant who helped Evan find out where to go after leaving Galvanize).
 
@@ -179,10 +181,103 @@ We'll come back to that in a bit!
 
 Before our eyes glaze over any further with all of these permutations of powers of 2, what does this have to do with the Internet browsing I'm familiar with?
 
+![IP address lolz](foxtrot_ip_address.png)
 
+Because words are much easier to remember than numbers, we usually use _domain names_ to refer to them. A group of public _Domain Name Server (DNS)_ providers are responsible for registering domain names and mapping them to IP addresses. So if you ever need to visit *google.com*, the first thing your computer will do will look up the IP address using its DNS server (side note: often, routers will assign DNS servers by default, but you can always override this setting if you have a DNS server you know that works).
 
+On a Mac, the `nslookup` command can be used to find out the IP address for a given domain name:
 
-* basics of networking (ip addresses, subnets, gateways, domain names, dns servers)
+    $ nslookup google.com
+    Server:		208.67.222.222
+    Address:	208.67.222.222#53
+
+    Non-authoritative answer:
+    Name:	google.com
+    Address: 172.217.5.110
+    Name:	google.com
+    Address: 172.217.5.110
+    Name:	google.com
+    Address: 172.217.5.110
+
+The output above tells me a few things. First, I can see that I am currently using a DNS server at _208.67.222.222_. Second, I can see that the public IP address for google.com is _172.217.5.110_.
+
+What happens if I can't reach the DNS server, you may be asking? From a networking perspective, this is a bad thing. You may remember the recent DDOS attack when a bunch of bots on IoT outages attacked Dyn, a major DNS provider, and it wiped out traffic across a good chunk of the US:
+
+![DDOS Attack](dyn_dns.png)
+
+### Routers
+
+We've already talked about routers a bit, but they play a big role on the Internet, linking traffic across networks, and helping to divert traffic to alternate routes when specific routes are overloaded. To go back to our metaphor, Evan passed through a few 'routers' on his way to San Francisco - at Galvanize, at Green River, at Reno, and at Philz. Each time, he asked the 'router' for directions about where to go next, and the router told him, based on an analysis of the routes available, and the likely speed at which he could travel along that route.
+
+On a Mac, you can use the command `traceroute` to visualize the route your traffic takes to a given domain - each row below is a router that facilitated one segment of the request:
+
+    $ traceroute google.com
+    traceroute to google.com (172.217.5.110), 64 hops max, 52 byte packets
+     1  xe-5-2-1.mpr1.den1.us.zip.zayo.com (128.177.113.101)  4.016 ms  3.418 ms  2.734 ms
+     2  ae26.cs1.den5.us.eth.zayo.com (64.125.31.240)  22.302 ms  23.062 ms  24.606 ms
+     3  ae5.cs1.ord2.us.eth.zayo.com (64.125.29.18)  24.074 ms  21.603 ms  23.014 ms
+     4  ae27.cr1.ord2.us.zip.zayo.com (64.125.30.243)  23.151 ms  25.003 ms  22.415 ms
+     5  ae15.er1.ord7.us.zip.zayo.com (64.125.31.85)  22.558 ms  23.150 ms  21.793 ms
+     6  72.14.217.53 (72.14.217.53)  23.478 ms  23.579 ms  21.882 ms
+     7  108.170.244.19 (108.170.244.19)  25.248 ms
+        108.170.243.243 (108.170.243.243)  23.295 ms
+        108.170.244.19 (108.170.244.19)  22.412 ms
+     8  209.85.241.47 (209.85.241.47)  25.023 ms
+        209.85.251.241 (209.85.251.241)  23.951 ms
+        209.85.243.163 (209.85.243.163)  23.627 ms
+     9  209.85.247.5 (209.85.247.5)  33.874 ms  33.870 ms  33.561 ms
+    10  216.239.47.250 (216.239.47.250)  43.123 ms  42.668 ms  45.072 ms
+    11  209.85.248.126 (209.85.248.126)  49.776 ms  50.518 ms
+        72.14.239.62 (72.14.239.62)  52.650 ms
+    12  209.85.246.21 (209.85.246.21)  50.322 ms
+        209.85.249.62 (209.85.249.62)  52.077 ms
+        209.85.246.39 (209.85.246.39)  50.418 ms
+    13  108.170.243.1 (108.170.243.1)  51.054 ms
+        108.170.242.225 (108.170.242.225)  50.257 ms
+        108.170.243.1 (108.170.243.1)  50.860 ms
+    14  108.170.236.61 (108.170.236.61)  51.374 ms
+        108.170.236.63 (108.170.236.63)  51.541 ms  51.809 ms
+    15  sfo03s07-in-f110.1e100.net (172.217.5.110)  52.007 ms  51.967 ms  51.424 ms
+
+Notice how the very last IP address on the list matches the IP address we got from our DNS server!
+
+### Firewalls and Ports
+
+Another reason we have private networks is because the public Internet is a pretty scary place, where lots of good stuff can happen but lots of dangerous characters hang out as well.
+
+![Danger](agent_smith.jpg)
+
+Most networks are protected by a _Firewall_ that can limit traffic based on IP address, _port number_, or other rules. Think of a port number as a way for a computer (on an IP address) to further sub-divide traffic, so that different services running on that server can receive specific types of traffic. A few of the most well-known, standardized port numbers are:
+
+<table>
+  <tr>
+    <td>Port number</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>21</td>
+    <td>File Transfer Protocol (FTP) data transfer</td>
+  </tr>
+  <tr>
+    <td>22</td>
+    <td>Secure Shell (SSH)</td>
+  </tr>
+  <tr>
+    <td>80</td>
+    <td>Hypertext Transfer Protocol (HTTP)</td>
+  </tr>
+  <tr>
+    <td>443</td>
+    <td>Hypertext Transfer Protocol over TLS/SSL (HTTPS)</td>
+  </tr>
+</table>
+
+Some port numbers are commonly used for specific applications (8080 is often used by the Apache Tomcat web server, and has become a common port to use for other types of web servers as well).
+
+As noted above, firewalls can be configured to block traffic on certain port numbers, or limit it to specific IP addresses. For example, the engineers maintaining the big, bad routers at Google might allow traffic from anywhere on port 80 and 443 (the default HTTP and HTTPS ports), but limit traffic on port 22 (the SSH port) to a set of secure IP addresses.
+
+## Advanced Topics
+
 * tcp/ip protocol
 * HTTP(S) protocol
 * REST requests
