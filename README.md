@@ -418,6 +418,45 @@ At it's most basic, a REST system:
 
 Last but not least in our little tour of Internet networks, we come to *SSH* and *SCP*.
 
-SSH is a protocol that allows a remote client to gain secure access to another host, and is a common tool used in administering servers. If I have a virtual machine running on my computer, I can see this in action:
+SSH is a protocol that allows a remote client to gain secure access to another host, and is a common tool used in administering servers. If I have a virtual machine running on my computer, I can see this in action, by finding its IP address, and using SSH to log in with an account on that machine. And when I run `ls`, I see the same list of files that are in that machine's home directory:
 
-    
+![TCP_IP](vm_files.png)
+
+    ssh mkulumadzi@192.168.99.102
+    The authenticity of host '192.168.99.102 (192.168.99.102)' can't be established.
+    ECDSA key fingerprint is SHA256:7bjV1HTwP66XB6RHaCIOgfMazK+DuLA4kpA2n0ipnhI.
+    Are you sure you want to continue connecting (yes/no)? yes
+    Warning: Permanently added '192.168.99.102' (ECDSA) to the list of known hosts.
+    mkulumadzi@192.168.99.102's password:
+    Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.8.0-46-generic x86_64)
+
+     * Documentation:  https://help.ubuntu.com
+     * Management:     https://landscape.canonical.com
+     * Support:        https://ubuntu.com/advantage
+
+    100 packages can be updated.
+    48 updates are security updates.
+
+
+    The programs included with the Ubuntu system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
+
+    Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+    applicable law.
+
+    mkulumadzi@tensor:~$ ls
+    Desktop  Documents  Downloads  environments  examples.desktop  Music  Pictures  Public  Templates  Videos  workspace
+
+
+Back on my computer, I can use SCP to securely copy a file over to this vm:
+
+    $ cat example.txt
+    Here is some text!
+    $ scp example.txt mkulumadzi@192.168.99.102:/home/mkulumadzi/Desktop
+    mkulumadzi@192.168.99.102's password:
+    example.txt                                                                                                    100%   19    11.1KB/s   00:00
+
+![TCP_IP](vm_scp.png)
+
+Yeah! Now we can Network Like a Boss. 👍
