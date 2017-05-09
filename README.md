@@ -6,7 +6,8 @@ One way to visualize the Internet is to think about a physical map brought to li
 
 Before the invention of GPS, how would a person have moved from point A to point B on this map? Let's imagine this with a specific scenario:
 
-    Evan is at work at Galvanize in Denver, CO, and needs to drive to Blue Rocket in San Francisco, CA to deliver a training on Internet Networking.
+    Evan is at work at Galvanize in Denver, CO, and needs to drive to Blue Rocket
+    in San Francisco, CA to deliver a training on Internet Networking.
 
 ![Mapquest](getting_to_blue_rocket.png)
 
@@ -167,7 +168,7 @@ You can test your connection to the gateway with the `ping` command (`ping` is a
 
 I can see that my computer has a stable, fast connection to the gateway (the fact that the time is only ~4ms is pretty fast).
 
-On any given network, the gateway is usually the _router_, and will help direct traffic between devices (so, if I want to print to a printer on _10.6.2.90_, this traffic will go to the router, and then get directed straight to the printer). Sometimes, virtual networks will be set up _inside_ a given computer - in that case the computer's network interface will act as the gateway. In my case, I have a private network set up that allows _Virtualbox_ to run virtual machines:
+On any given local network, the gateway is usually the _router_, which will also assign IP addresses and defaults for DNS servers. Sometimes, virtual networks will be set up _inside_ a given computer - in that case the computer's network interface will act as the gateway. In my case, I have a private network set up that allows _Virtualbox_ to run virtual machines:
 
     $ ifconfig
     ...
@@ -278,7 +279,145 @@ As noted above, firewalls can be configured to block traffic on certain port num
 
 ## Advanced Topics
 
-* tcp/ip protocol
-* HTTP(S) protocol
-* REST requests
-* SSH and SCP
+### TCP/IP
+
+The [TCP/IP Protocol](https://en.wikipedia.org/wiki/Internet_protocol_suite) is a common name for the *Internet protocol suite*, which underlies all of the things we've talked about above. The TCP/IP protocol is abstracted into four layers that help route traffic:
+
+![TCP_IP](tcp_ip.png)
+
+<table>
+  <tr>
+    <td>Layer</td>
+    <td>Role</td>
+  </tr>
+  <tr>
+    <td>Application Layer</td>
+    <td>Used to communicate user data between services running on the same, or different, hosts. This is the layer at which higher-level protocols such as HTTP and SSH operate.</td>
+  </tr>
+  <tr>
+    <td>Transport Layer</td>
+    <td>Used for host-to-host communication, facilitated by routers and network interfaces. UDP is the basic protocol, while TCP provides more reliable transport.</td>
+  </tr>
+  <tr>
+    <td>Internet Layer</td>
+    <td>Used to exchange data across network boundaries. The IP address protocol is defined at this level.</td>
+  </tr>
+  <tr>
+    <td>Link Layer</td>
+    <td>Defines networking methods within local networks, allowing hosts to communicate without intervening routers.</td>
+  </tr>
+</table>
+
+### HTTP(S) protocol
+
+HTTP (or, the Hypertext Transfer Protocol) is super fun and powers a lot of the Internet that we know and love. Some fun facts:
+
+* An *HTTP session* encapsulates request from a client to a server, and that server's response.
+* Requests can be defined with various *methods* (GET, PUT, POST) that define whether the client is trying to retrieve, update or otherwise modify the resource.
+* Some requests, such as POST and PUT, may include a *body* of information that the client wants to send to the server.
+* Requests usually have *headers* that tell the server something about the host, and what it might expect back.
+* The server will respond with a *status code* that defines whether or not the request was successful, as well as response headers, and sometimes a response body.
+
+A variety of methods can be used to make an HTTP request. One command you may have seen before is `curl`:
+
+    curl -v -X GET http://google.com
+    Note: Unnecessary use of -X or --request, GET is already inferred.
+    * Rebuilt URL to: http://google.com/
+    *   Trying 172.217.5.110...
+    * TCP_NODELAY set
+    * Connected to google.com (172.217.5.110) port 80 (#0)
+    > GET / HTTP/1.1
+    > Host: google.com
+    > User-Agent: curl/7.51.0
+    > Accept: */*
+    >
+    < HTTP/1.1 301 Moved Permanently
+    < Location: http://www.google.com/
+    < Content-Type: text/html; charset=UTF-8
+    < Date: Tue, 09 May 2017 01:36:21 GMT
+    < Expires: Thu, 08 Jun 2017 01:36:21 GMT
+    < Cache-Control: public, max-age=2592000
+    < Server: gws
+    < Content-Length: 219
+    < X-XSS-Protection: 1; mode=block
+    < X-Frame-Options: SAMEORIGIN
+    <
+    <HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <TITLE>301 Moved</TITLE></HEAD><BODY>
+    <H1>301 Moved</H1>
+    The document has moved
+    <A HREF="http://www.google.com/">here</A>.
+    </BODY></HTML>
+    * Curl_http_done: called premature == 0
+    * Connection #0 to host google.com left intact
+
+A bunch of cool things are happening there:
+
+1. curl told me I didn't need to tell it I was making a GET request (but I would have needed to if I had made a different type of request)
+2. A DNS request was made that resolved google.com to good-old IP address 172.217.5.110
+3. curl sent a few headers by default, including the *User-Agent* header, which tells Google that I was using curl to make the request.
+4. Google responded with a status of 301, which is short-hand for "Go get this somewhere else" (in this case, if I had been making the requst on a web browser, I would have been redirected to http://www.google.com)
+5. Google also returned a few headers, and a response body that helped me understand the redirect in a bit more detail.
+
+There are a [bunch of different status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) that can be used - but at a high level they can be grouped as follows:
+
+<table>
+  <tr>
+    <td>Group</td>
+    <td>Description</td>
+    <td>Example</td>
+  </tr>
+  <tr>
+    <td>1xx</td>
+    <td>Informational requests</td>
+    <td>100 Continue</td>
+  </tr>
+  <tr>
+    <td>2xx</td>
+    <td>Success</td>
+    <td>200 Ok</td>
+  </tr>
+  <tr>
+    <td>3xx</td>
+    <td>Redirection</td>
+    <td>301 Moved Permanently</td>
+  </tr>
+  <tr>
+    <td>4xx</td>
+    <td>Client errors</td>
+    <td>401 Unauthorized</td>
+  </tr>
+  <tr>
+    <td>5xx</td>
+    <td>Server errors</td>
+    <td>500 Internal Server Error</td>
+  </tr>
+</table>
+
+#### HTTPS
+
+HTTPS is like HTTP, but secure:
+
+* To process HTTPS requests, servers must obtain an official SSL certificate from a registered authority, that maps to their domain name
+* Before making a request, clients request this certificate from the server, and check it with a certificate authority
+* If the certificate is valid, the client makes an encrypted request that only the server can decipher, and the server issues an encrypted response that only the client can understand.
+
+### REST
+
+REST stands for Representational State Transfer, and is a commonly-used standard for making requests. It is more of a set of guidelines than a dogma, and purists can spend hours arguing over its minutia.
+
+![TCP_IP](dogma.jpg)
+
+At it's most basic, a REST system:
+
+* Uses common HTTP methods (GET, PUT, POST, DELETE) to retrieve or modify information
+* Provides links that represent resources (/user/1 is the user with id 1, while /users is all users)
+* Returns responses that may be in XML, HTML, JSON, or some other defined format
+
+### SSH and SCP
+
+Last but not least in our little tour of Internet networks, we come to *SSH* and *SCP*.
+
+SSH is a protocol that allows a remote client to gain secure access to another host, and is a common tool used in administering servers. If I have a virtual machine running on my computer, I can see this in action:
+
+    
