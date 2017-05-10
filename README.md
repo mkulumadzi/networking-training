@@ -176,7 +176,7 @@ On any given local network, the gateway is usually the _router_, which will also
 	  ether 0a:00:27:00:00:00
 	  inet 192.168.99.1 netmask 0xffffff00 broadcast 192.168.99.255
 
-![Zoolander](in_the_computer.png)
+![Zoolander](in_the_computer.jpg)
 
 We'll come back to that in a bit!
 
