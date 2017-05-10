@@ -104,7 +104,7 @@ Subnet masks help define the size of a network. The larger the mask, the more ad
         <td>Number of addresses</td>
     <tr>
     <tr>
-        <td>31</td>
+        <td>30</td>
         <td>255.255.255.252</td>
         <td>FFFFFFFF</td>
         <td>4</td>
@@ -143,7 +143,7 @@ Looking at my output from `ifconfig` again:
 
 Gateways play a special role within networks, and outside of them (remember our parking lot attendant who helped Evan find out where to go after leaving Galvanize).
 
-On a Mac, you can look up your gateway with the `route default` command:
+On a Mac, you can look up your gateway with the `route get default` command:
 
     $ route get default
     route to: default
@@ -175,6 +175,8 @@ On any given local network, the gateway is usually the _router_, which will also
     vboxnet0: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
 	  ether 0a:00:27:00:00:00
 	  inet 192.168.99.1 netmask 0xffffff00 broadcast 192.168.99.255
+
+![Zoolander](in_the_computer.png)
 
 We'll come back to that in a bit!
 
@@ -208,7 +210,7 @@ What happens if I can't reach the DNS server, you may be asking? From a networki
 
 ### Routers
 
-We've already talked about routers a bit, but they play a big role on the Internet, linking traffic across networks, and helping to divert traffic to alternate routes when specific routes are overloaded. To go back to our metaphor, Evan passed through a few 'routers' on his way to San Francisco - at Galvanize, at Green River, at Reno, and at Philz. Each time, he asked the 'router' for directions about where to go next, and the router told him, based on an analysis of the routes available, and the likely speed at which he could travel along that route.
+We've already talked about routers a bit, but they play a big role on the Internet, linking traffic across networks, and helping to divert traffic to alternate routes when certain routes are overloaded. To go back to our metaphor, Evan passed through a few 'routers' on his way to San Francisco - at Galvanize, at Green River, at Reno, and at Philz. Each time, he asked the 'router' for directions about where to go next, and the router told him, based on an analysis of the routes available, and the likely speed at which he could travel along that route.
 
 On a Mac, you can use the command `traceroute` to visualize the route your traffic takes to a given domain - each row below is a router that facilitated one segment of the request:
 
@@ -353,7 +355,7 @@ A variety of methods can be used to make an HTTP request. One command you may ha
 
 A bunch of cool things are happening there:
 
-1. curl told me I didn't need to tell it I was making a GET request (but I would have needed to if I had made a different type of request)
+1. curl told me I didn't need to say I was making a GET request (but I would have needed to if I had made a different type of request)
 2. A DNS request was made that resolved google.com to good-old IP address 172.217.5.110
 3. curl sent a few headers by default, including the *User-Agent* header, which tells Google that I was using curl to make the request.
 4. Google responded with a status of 301, which is short-hand for "Go get this somewhere else" (in this case, if I had been making the requst on a web browser, I would have been redirected to http://www.google.com)
@@ -398,7 +400,7 @@ There are a [bunch of different status codes](https://en.wikipedia.org/wiki/List
 
 HTTPS is like HTTP, but secure:
 
-* To process HTTPS requests, servers must obtain an official SSL certificate from a registered authority, that maps to their domain name
+* To process HTTPS requests, servers must obtain an official SSL certificate from a registered authority that maps to their domain name
 * Before making a request, clients request this certificate from the server, and check it with a certificate authority
 * If the certificate is valid, the client makes an encrypted request that only the server can decipher, and the server issues an encrypted response that only the client can understand.
 
