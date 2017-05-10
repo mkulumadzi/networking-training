@@ -13,7 +13,7 @@ Before the invention of GPS, how would a person have moved from point A to point
 
 How would Evan do this, before he had an iPhone that told him what to do?
 
-1. Evan doesn't know the address of Galvanize by heart. Fortunately, he has a phone book from San Francisco - he flips through the phone book and finds out that Galvanize is located at 233 Sansome St Suite 1100, San Francisco, CA
+1. Evan doesn't know the address of Blue Rocket by heart. Fortunately, he has a phone book from San Francisco - he flips through the phone book and finds out that Blue Rocket is located at 233 Sansome St Suite 1100, San Francisco, CA
 2. Evan parked his car in the parking garage downstairs, so he walks down to his car and drives to the exit of the garage
 3. At the garage exit, he asks the attendant about the best way to get to San Francisco. The parking attendant says "Well, I'm not an all-seeing oracle, but I know that you need to get on I-70 and west go from there. The best way to get there from here is to go South on Federal, take 6 West, and merge onto I-70. I know you'll need to go at least as far as Green River, Utah."
 4. Evan follows these helpful instructions, and drives west through the Rocky mountains, arriving in Green River that evening. There, he pulls in to a gas station to refill his car, and asks the cashier about the best way to get to San Francisco. The cashier tells him that he'd normally recommend taking Route 50 to Reno, but he knows there happens to be construction going on, so the best way is probably to take 191 up to Salt Lake City, and then catch I-80 over to Reno.
